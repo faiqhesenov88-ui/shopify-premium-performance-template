@@ -1,0 +1,70 @@
+<div class="product-card" style="display: flex; flex-direction: column; height: 100%; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; position: relative; background: #fff; padding: 15px;">
+  <!-- BADGES BACKEND (SALE & SOLD OUT) -->
+  <div class="product-badges" style="position: absolute; top: 10px; left: 10px; z-index: 2; display: flex; flex-direction: column; gap: 5px;">
+    {%- if product.available == false -%}
+      <span class="badge sold-out" style="background: #777777; color: #ffffff; padding: 4px 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 3px;">Sold Out</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="badge sale" style="background: #ff4545; color: #ffffff; padding: 4px 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 3px;">Sale</span>
+    {%- endif -%}
+  </div>
+
+  <!-- OPTIMIZED PRODUCT IMAGE -->
+  <div class="product-image" style="width: 100%; margin-bottom: 15px; display: block;">
+    <img
+      src="{{ product.featured_image | image_url: width: 400 }}"
+      srcset="{{ product.featured_image | image_url: width: 200 }} 200w,
+              {{ product.featured_image | image_url: width: 400 }} 400w,
+              {{ product.featured_image | image_url: width: 600 }} 600w"
+      sizes="(max-width: 749px) 200px, (max-width: 989px) 400px, 600px"
+      loading="lazy"
+      alt="{{ product.title | escape }}"
+      width="100%"
+      height="auto"
+      style="object-fit: cover; display: block;"
+    >
+  </div>
+
+  <!-- PRODUCT INFO & BACKEND DATA -->
+  <div class="product-info" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left;">
+    <div>
+      {% if product.metafields.custom.material != blank %}
+        <div class="product-card__material" style="font-size: 13px; color: #666666; margin-bottom: 5px; font-weight: 500;">
+          Material: {{ product.metafields.custom.material }}
+        </div>
+      {% endif %}
+
+      {% if product.metafields.custom.product_designer.value != blank %}
+        {% assign designer = product.metafields.custom.product_designer.value %}
+        <div class="product-card__designer" style="margin-bottom: 10px; padding: 10px; background: #f9f9f9; border-left: 3px solid #000; font-size: 12px;">
+          <strong style="color: #121212; display: block; margin-bottom: 2px;">Designed by: {{ designer.name }}</strong>
+          <div style="color: #666; margin: 0; line-height: 1.4;">{{ designer.bio.html }}</div>
+        </div>
+      {% endif %}
+
+      <h3 style="font-size: 16px; margin: 0 0 10px 0; color: #121212; font-weight: 600; line-height: 1.4;">
+        <a href="{{ product.url }}" style="color: inherit; text-decoration: none;">{{ product.title }}</a>
+      </h3>
+    </div>
+
+    <!-- PRICE & ADD TO CART -->
+    <div>
+      <div class="product-price-wrapper" style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+        {% if product.compare_at_price > product.price %}
+          <span class="price-compare" style="text-decoration: line-through; color: #999; font-size: 14px;">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        <span class="price-current" style="font-weight: bold; color: #121212; font-size: 16px;">{{ product.price | money }}</span>
+      </div>
+
+      <button 
+        type="button" 
+        class="btn-add-to-cart" 
+        onclick="faiqDirectAddToCart(event, this)" 
+        data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+        {% if product.available == false %}disabled{% endif %}
+        style="width: 100%; padding: 12px; background: #000; color: #fff; border: none; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; cursor: pointer; transition: background 0.3s;"
+      >
+        {% if product.available == false %}Sold Out{% else %}Add To Cart{% endif %}
+      </button>
+    </div>
+  </div>
+</div>
