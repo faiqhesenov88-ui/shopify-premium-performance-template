@@ -1,0 +1,57 @@
+<style>
+  .faiq-products-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    font-family: sans-serif;
+  }
+  .faiq-products-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* Məhsulları yan-yana 4 sütun edir */
+    gap: 20px;
+  }
+  @media (max-width: 749px) {
+    .products-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)); /* Mobildə yan-yana 2 sütun edir */
+      gap: 10px;
+    }
+  }
+</style>
+{%- assign collection = section.settings.selected_collection -%}
+
+<div class="faiq-products-container">
+  <h2>{{ collection.title | default: "No Collection Selected" }}</h2>
+
+  <div class="products-grid">
+    {%- for product in collection.products limit: 4 -%}
+      {% render 'product-card', product: product %}
+    {%- else -%}
+      <p>No products found in this collection or no collection selected in the admin panel.</p>
+    {%- endfor -%}
+  </div>
+</div>
+{% schema %}
+{
+  "name": "Faiq Featured Products",
+  "tag": "section",
+  "class": "section-faiq-featured",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "selected_collection",
+      "label": "Select Collection"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Faiq Featured Products"
+    }
+  ]
+}
+{% endschema %}
